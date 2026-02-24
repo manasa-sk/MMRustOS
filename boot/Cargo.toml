@@ -1,0 +1,13 @@
+[package]
+name = "boot"
+edition = "2021"
+
+[dependencies]
+uefi = "0.26"
+uefi-services = "0.23"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
