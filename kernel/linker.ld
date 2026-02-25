@@ -4,8 +4,8 @@ SECTIONS
 {
   . = 0xffffffff80000000;
 
-  .text : { *(.text*) }
-  .rodata : { *(.rodata*) }
-  .data : { *(.data*) }
-  .bss : { *(.bss*) }
+  .text : ALIGN(4K) { *(.text*) }
+  .rodata : ALIGN(4K) { *(.rodata*) }
+  .data : ALIGN(4K) { *(.data*) }
+  .bss : ALIGN(4K) { *(.bss*) }
 }
