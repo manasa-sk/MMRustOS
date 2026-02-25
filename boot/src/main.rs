@@ -3,33 +3,32 @@
 
 extern crate alloc;
 
-use uefi::prelude::*;
 use core::fmt::Write;
+use uefi::prelude::*;
+
+mod elf;
 
 #[entry]
 fn efi_main(handle: Handle, mut st: SystemTable<Boot>) -> Status {
-    // Init UEFI
     if let Err(e) = uefi_services::init(&mut st) {
         return e.status();
     }
 
-    let stdout = st.stdout();
-
-    let _ = stdout.reset(false);
-    let _ = stdout.write_str("Bootloader started (x86_64 UEFI)\n");
+    st.stdout().reset(false).ok();
+    st.stdout().write_str("Bootloader started\n").ok();
 
     match elf::load_kernel(handle, &st) {
         Ok(kernel) => {
-            let _ = stdout.write_fmt(format_args!(
+            st.stdout().write_fmt(format_args!(
                 "Kernel loaded: {} bytes\n",
                 kernel.len()
-            ));
+            )).ok();
         }
         Err(e) => {
-            let _ = stdout.write_fmt(format_args!(
+            st.stdout().write_fmt(format_args!(
                 "Failed to load kernel: {:?}\n",
                 e
-            ));
+            )).ok();
         }
     }
 
