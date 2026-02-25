@@ -8,6 +8,7 @@ use uefi::prelude::*;
 use uefi::table::boot::MemoryType;
 
 mod elf;
+mod paging;
 
 #[entry]
 fn efi_main(handle: Handle, mut st: SystemTable<Boot>) -> Status {
@@ -76,6 +77,11 @@ fn efi_main(handle: Handle, mut st: SystemTable<Boot>) -> Status {
                         ph.p_vaddr,
                         phys_addr
                     )).ok();
+                }
+
+                unsafe {
+                    let tables = paging::setup_identity_mapping(&st);
+                    st.stdout().write_str("Identity mapping ready\n").ok();
                 }
             }
             Err(e) => {
